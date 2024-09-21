@@ -5,6 +5,7 @@ import {
   SupportedModels,
 } from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
+import { isNil } from "lodash";
 import { useEffect, useRef, useState } from "react";
 import { detectPose } from "../utils/PoseDetectionUtils";
 import "./pose-detection.css";
@@ -33,8 +34,13 @@ const PoseDetection = () => {
   };
 
   const runPoseDetection = async () => {
-    if (videoRef.current?.videoWidth && videoRef.current?.videoHeight) {
-      await detectPose(videoRef, canvasRef, detector);
+    const shouldRunPoseDetection =
+      !isNil(videoRef.current) &&
+      !isNil(canvasRef.current) &&
+      videoRef.current?.videoWidth &&
+      videoRef.current?.videoHeight;
+    if (shouldRunPoseDetection) {
+      await detectPose(videoRef.current, canvasRef.current, detector);
       requestAnimationFrame(runPoseDetection);
     }
   };

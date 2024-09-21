@@ -47,40 +47,47 @@ export const isSquatCorrect = (keypoints: Keypoint[]) => {
   return isHipKneeHorizontal && isKneeSafe;
 };
 
-export const detectPose = async (
-  videoRef: React.RefObject<HTMLVideoElement>,
-  canvasRef: React.RefObject<HTMLCanvasElement>,
+export const getValidKyePointsFromVideo = async (
+  video: HTMLVideoElement,
   detector?: PoseDetector
 ) => {
-  if (!detector) return;
-
-  const video = videoRef.current;
-  if (!video) return;
+  if (!detector || !video) return;
 
   const poses = await detector.estimatePoses(video);
 
   if (poses.length > 0) {
-    const keypoints = poses[0].keypoints;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
+    return poses[0].keypoints.filter(
+      (keypoint) => keypoint.score && keypoint.score > 0.45
+    );
+  }
+};
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+export const detectPose = async (
+  video: HTMLVideoElement,
+  canvas: HTMLCanvasElement,
+  detector?: PoseDetector
+) => {
+  const keyPoints = await getValidKyePointsFromVideo(video, detector);
 
-    if (!ctx) return;
+  if (!canvas || !keyPoints) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawKeypoints(keypoints, ctx);
+  const ctx = canvas.getContext("2d");
 
-    const isCorrect = isSquatCorrect(keypoints);
-    ctx.font = "20px Arial";
-    if (isCorrect) {
-      ctx.fillStyle = "green";
-      ctx.fillText("Good Squat", 10, 30);
-    } else {
-      ctx.fillStyle = "red";
-      ctx.fillText("Improve posture", 10, 30);
-    }
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  if (!ctx) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawKeypoints(keyPoints, ctx);
+
+  const isCorrect = isSquatCorrect(keyPoints);
+  ctx.font = "20px Arial";
+  if (isCorrect) {
+    ctx.fillStyle = "green";
+    ctx.fillText("Good Squat", 10, 30);
+  } else {
+    ctx.fillStyle = "red";
+    ctx.fillText("Improve posture", 10, 30);
   }
 };
