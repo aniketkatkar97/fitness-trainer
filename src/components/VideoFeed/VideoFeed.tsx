@@ -7,10 +7,10 @@ import {
 import * as tf from "@tensorflow/tfjs";
 import { isNil } from "lodash";
 import { useEffect, useRef, useState } from "react";
-import { detectPose } from "../utils/PoseDetectionUtils";
-import "./pose-detection.css";
+import { detectPose } from "../../utils/PoseDetectionUtils";
+import "./video-feed.css";
 
-const PoseDetection = () => {
+const VideoFeed = () => {
   const videoRef = useRef<HTMLVideoElement>(null); // Create a reference to the video element
   const canvasRef = useRef<HTMLCanvasElement>(null); // Create a reference to the canvas element to draw the keypoints
   const [detector, setDetector] = useState<PoseDetector>();
@@ -64,4 +64,4 @@ const PoseDetection = () => {
   );
 };
 
-export default PoseDetection;
+export default VideoFeed;

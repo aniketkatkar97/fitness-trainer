@@ -1,10 +1,10 @@
 import "./App.css";
-import PoseDetection from "./components/PoseDetection";
+import VideoFeed from "./components/VideoFeed/VideoFeed";
 
 function App() {
   return (
     <div className="App">
-      <PoseDetection />
+      <VideoFeed />
     </div>
   );
 }
