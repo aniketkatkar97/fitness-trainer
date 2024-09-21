@@ -7,6 +7,7 @@ import {
 import * as tf from "@tensorflow/tfjs";
 import { useEffect, useRef, useState } from "react";
 import { detectPose } from "../utils/PoseDetectionUtils";
+import "./pose-detection.css";
 
 const PoseDetection = () => {
   const videoRef = useRef<HTMLVideoElement>(null); // Create a reference to the video element
@@ -48,37 +49,11 @@ const PoseDetection = () => {
   }, [detector]);
 
   return (
-    <div
-      style={{
-        height: 800,
-        width: 800,
-      }}
-    >
-      <video
-        ref={videoRef}
-        autoPlay
-        style={{
-          zIndex: 10,
-          position: "absolute",
-          top: 0,
-          left: 0,
-          height: 800,
-          width: 800,
-        }}
-      >
+    <div className="pose-detection-container">
+      <video className="visual-container" ref={videoRef} autoPlay>
         <track kind="captions" />
       </video>
-      <canvas
-        ref={canvasRef}
-        style={{
-          zIndex: 100,
-          position: "absolute",
-          top: 100,
-          left: 0,
-          height: 600,
-          width: 800,
-        }}
-      />
+      <canvas className="visual-container canvas-container" ref={canvasRef} />
     </div>
   );
 };
