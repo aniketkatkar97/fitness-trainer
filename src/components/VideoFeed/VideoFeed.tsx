@@ -5,12 +5,29 @@ import {
   SupportedModels,
 } from "@tensorflow-models/pose-detection";
 import * as tf from "@tensorflow/tfjs";
+import { Col, Row, Typography } from "antd";
 import { isNil } from "lodash";
-import { useEffect, useRef, useState } from "react";
-import { detectPose } from "../../utils/PoseDetectionUtils";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
+import { ExerciseStatus } from "../../enums/exercise.enum";
+import {
+  getValidKyePointsFromVideo,
+  paintRefPoints,
+} from "../../utils/PoseDetectionUtils";
+import {
+  checkSquatDownPosition,
+  checkSquatUpPosition,
+} from "../../utils/PostureCheckUtils";
 import "./video-feed.css";
 
 const VideoFeed = () => {
+  const {
+    halfRepCompleted,
+    repCount,
+    setHalfRepCompleted,
+    setRepCount,
+    setExercises,
+  } = useExerciseStatsProvider();
   const videoRef = useRef<HTMLVideoElement>(null); // Create a reference to the video element
   const canvasRef = useRef<HTMLCanvasElement>(null); // Create a reference to the canvas element to draw the keypoints
   const [detector, setDetector] = useState<PoseDetector>();
@@ -33,17 +50,101 @@ const VideoFeed = () => {
     }
   };
 
-  const runPoseDetection = async () => {
-    const shouldRunPoseDetection =
-      !isNil(videoRef.current) &&
-      !isNil(canvasRef.current) &&
-      videoRef.current?.videoWidth &&
-      videoRef.current?.videoHeight;
-    if (shouldRunPoseDetection) {
-      await detectPose(videoRef.current, canvasRef.current, detector);
-      requestAnimationFrame(runPoseDetection);
-    }
-  };
+  const runPoseDetection = useCallback(
+    async (halfRepCompleted: boolean) => {
+      let halfRepValue = halfRepCompleted;
+      const shouldRunPoseDetection =
+        !isNil(videoRef.current) &&
+        !isNil(canvasRef.current) &&
+        videoRef.current?.videoWidth &&
+        videoRef.current?.videoHeight;
+      if (shouldRunPoseDetection) {
+        const keyPoints = await getValidKyePointsFromVideo(
+          videoRef.current,
+          detector
+        );
+        if (keyPoints) {
+          paintRefPoints(videoRef.current, canvasRef.current, keyPoints);
+          console.log("halfRepCompleted", halfRepCompleted);
+          if (halfRepCompleted) {
+            const checks = checkSquatUpPosition(keyPoints);
+            if (checks.value) {
+              setHalfRepCompleted(false);
+              halfRepValue = false;
+              setRepCount((prev) => prev + 1);
+              console.log("here", repCount);
+            }
+            setExercises((prev) => {
+              const currentExerciseIndex = prev.findIndex(
+                (exercise) => exercise.status === ExerciseStatus.Process
+              );
+              return prev.map((exercise, index) => {
+                if (index === currentExerciseIndex) {
+                  return {
+                    ...exercise,
+                    description: (
+                      <Row>
+                        {checks.feedbacks.map((feedback) => {
+                          return (
+                            <Col key={feedback.key}>
+                              <Typography.Text
+                                type={feedback.value ? "success" : "danger"}
+                              >
+                                {feedback.message}
+                              </Typography.Text>
+                            </Col>
+                          );
+                        })}
+                      </Row>
+                    ),
+                  };
+                }
+                return exercise;
+              });
+            });
+          } else {
+            const checks = checkSquatDownPosition(keyPoints);
+            if (checks.value) {
+              setHalfRepCompleted(true);
+              halfRepValue = true;
+              console.log("here half");
+            }
+            setExercises((prev) => {
+              const currentExerciseIndex = prev.findIndex(
+                (exercise) => exercise.status === ExerciseStatus.Process
+              );
+              return prev.map((exercise, index) => {
+                if (index === currentExerciseIndex) {
+                  return {
+                    ...exercise,
+                    description: (
+                      <Row>
+                        {checks.feedbacks.map((feedback) => {
+                          return (
+                            <Col key={feedback.key}>
+                              <Typography.Text
+                                type={feedback.value ? "success" : "danger"}
+                              >
+                                {feedback.message}
+                              </Typography.Text>
+                            </Col>
+                          );
+                        })}
+                      </Row>
+                    ),
+                  };
+                }
+                return exercise;
+              });
+            });
+          }
+
+          requestAnimationFrame(() => runPoseDetection(halfRepValue));
+        }
+      }
+    },
+    [repCount, videoRef.current, canvasRef.current, detector]
+  );
 
   useEffect(() => {
     initialize();
@@ -51,7 +152,7 @@ const VideoFeed = () => {
   }, []);
 
   useEffect(() => {
-    runPoseDetection();
+    runPoseDetection(halfRepCompleted);
   }, [detector]);
 
   return (

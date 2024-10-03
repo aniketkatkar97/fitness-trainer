@@ -1,10 +1,13 @@
 import "./App.css";
-import VideoFeed from "./components/VideoFeed/VideoFeed";
+import ExerciseDashboard from "./components/ExerciseDashboard/ExerciseDashboard";
+import ExerciseStatsProvider from "./contexts/ExerciseStatsProvider";
 
 function App() {
   return (
     <div className="App">
-      <VideoFeed />
+      <ExerciseStatsProvider>
+        <ExerciseDashboard />
+      </ExerciseStatsProvider>
     </div>
   );
 }

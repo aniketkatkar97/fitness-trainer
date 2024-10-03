@@ -30,23 +30,6 @@ export const calculateAngle = (
   return angle;
 };
 
-export const isSquatCorrect = (keypoints: Keypoint[]) => {
-  const hip = keypoints.find((point) => point.name === "left_hip");
-  const knee = keypoints.find((point) => point.name === "left_knee");
-  const ankle = keypoints.find((point) => point.name === "left_ankle");
-
-  if (!hip || !knee || !ankle) return false;
-
-  // Check if thigh is parallel to the ground
-  const isHipKneeHorizontal =
-    -50 < Math.abs(hip.y - knee.y) && Math.abs(hip.y - knee.y) < 50;
-
-  // Check if knee is not extending beyond toes
-  const isKneeSafe = knee.x - ankle.x < 120;
-
-  return isHipKneeHorizontal && isKneeSafe;
-};
-
 export const getValidKyePointsFromVideo = async (
   video: HTMLVideoElement,
   detector?: PoseDetector
@@ -62,14 +45,12 @@ export const getValidKyePointsFromVideo = async (
   }
 };
 
-export const detectPose = async (
+export const paintRefPoints = (
   video: HTMLVideoElement,
   canvas: HTMLCanvasElement,
-  detector?: PoseDetector
+  keyPoints: Keypoint[]
 ) => {
-  const keyPoints = await getValidKyePointsFromVideo(video, detector);
-
-  if (!canvas || !keyPoints) return;
+  if (!canvas) return;
 
   const ctx = canvas.getContext("2d");
 
@@ -80,14 +61,4 @@ export const detectPose = async (
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawKeypoints(keyPoints, ctx);
-
-  const isCorrect = isSquatCorrect(keyPoints);
-  ctx.font = "20px Arial";
-  if (isCorrect) {
-    ctx.fillStyle = "green";
-    ctx.fillText("Good Squat", 10, 30);
-  } else {
-    ctx.fillStyle = "red";
-    ctx.fillText("Improve posture", 10, 30);
-  }
 };
