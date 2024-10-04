@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Dumbbell, LineChart, Video } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, Dumbbell, LineChart, Video } from "lucide-react";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -26,7 +26,7 @@ export default function LandingPage() {
           </Link>
           <Link
             className="text-sm font-medium hover:underline underline-offset-4"
-            href="#get-started"
+            href="/workout"
           >
             Get Started
           </Link>
@@ -47,7 +47,7 @@ export default function LandingPage() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="#get-started">Get Started</Link>
+                  <Link href="/workout">Get Started</Link>
                 </Button>
                 <Button asChild variant="outline">
                   <Link href="#how-it-works">Learn More</Link>
