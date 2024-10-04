@@ -29,6 +29,7 @@ const VideoFeed = () => {
     setRepCount,
     setExercises,
   } = useExerciseStatsProvider();
+  const timeoutRef = useRef<NodeJS.Timeout>();
   const videoRef = useRef<HTMLVideoElement>(null); // Create a reference to the video element
   const canvasRef = useRef<HTMLCanvasElement>(null); // Create a reference to the canvas element to draw the keypoints
   const [detector, setDetector] = useState<PoseDetector>();
@@ -66,14 +67,13 @@ const VideoFeed = () => {
         );
         if (keyPoints) {
           paintRefPoints(videoRef.current, canvasRef.current, keyPoints);
-          console.log("halfRepCompleted", halfRepCompleted);
           if (halfRepCompleted) {
             const checks = checkSquatUpPosition(keyPoints);
             if (checks.value) {
               setHalfRepCompleted(false);
               halfRepValue = false;
               setRepCount((prev) => prev + 1);
-              console.log("here", repCount);
+              clearTimeout(timeoutRef.current);
             }
             setExercises((prev) => {
               const currentExerciseIndex = prev.findIndex(
@@ -108,7 +108,7 @@ const VideoFeed = () => {
             if (checks.value) {
               setHalfRepCompleted(true);
               halfRepValue = true;
-              console.log("here half");
+              clearTimeout(timeoutRef.current);
             }
             setExercises((prev) => {
               const currentExerciseIndex = prev.findIndex(
@@ -140,7 +140,10 @@ const VideoFeed = () => {
             });
           }
 
-          requestAnimationFrame(() => runPoseDetection(halfRepValue));
+          timeoutRef.current = setTimeout(
+            () => runPoseDetection(halfRepValue),
+            0
+          );
         }
       }
     },
@@ -150,6 +153,8 @@ const VideoFeed = () => {
   useEffect(() => {
     initialize();
     getVideo();
+
+    return () => clearTimeout(timeoutRef.current);
   }, []);
 
   useEffect(() => {

@@ -1,5 +1,5 @@
 "use client";
-import { Col, Layout, Row, Steps } from "antd";
+import { Col, Layout, Row, Steps, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
@@ -23,6 +23,9 @@ function ExerciseDashboard() {
           style={{ height: "100%" }}
         >
           <Col>
+            <Typography.Title>
+              {repCount}
+            </Typography.Title>
             <Steps
               current={currentExercise.key}
               percent={(repCount / totalReps) * 100}
