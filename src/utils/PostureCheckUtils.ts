@@ -1,3 +1,4 @@
+import { ExerciseStatDetails } from "@/contexts/ExerciseStatsProvider";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 
 export const calculateAngle = (
@@ -19,7 +20,9 @@ export const calculateAngle = (
   );
 };
 
-export const checkSquatDownPosition = (keypoints: Keypoint[]) => {
+export const checkSquatDownPosition = (
+  keypoints: Keypoint[]
+): ExerciseStatDetails => {
   const leftHip = keypoints.find((point) => point.name === "left_hip");
   const leftKnee = keypoints.find((point) => point.name === "left_knee");
   const leftAnkle = keypoints.find((point) => point.name === "left_ankle");
@@ -106,7 +109,9 @@ export const checkSquatDownPosition = (keypoints: Keypoint[]) => {
   };
 };
 
-export const checkSquatUpPosition = (keypoints: Keypoint[]) => {
+export const checkSquatUpPosition = (
+  keypoints: Keypoint[]
+): ExerciseStatDetails => {
   const leftShoulder = keypoints.find(
     (point) => point.name === "left_shoulder"
   );
@@ -144,11 +149,9 @@ export const checkSquatUpPosition = (keypoints: Keypoint[]) => {
   // Check if thigh is parallel to the ground
   const isLeftSideStraight =
     -20 < Math.abs(leftShoulder.x - leftHip.x) &&
-    Math.abs(leftHip.x - leftKnee.x) &&
     Math.abs(leftHip.x - leftKnee.x) < 20;
   const isRightSideStraight =
     -20 < Math.abs(rightShoulder.x - rightHip.x) &&
-    Math.abs(rightHip.x - rightKnee.x) &&
     Math.abs(rightHip.x - rightKnee.x) < 20;
 
   const feedbacks = [

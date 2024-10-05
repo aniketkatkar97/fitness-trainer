@@ -1,4 +1,5 @@
 "use client";
+import { getChecksFromExercise } from "@/utils/VideoFeeUtils";
 import {
   createDetector,
   movenet,
@@ -15,16 +16,12 @@ import {
   getValidKyePointsFromVideo,
   paintRefPoints,
 } from "../../utils/PoseDetectionUtils";
-import {
-  checkSquatDownPosition,
-  checkSquatUpPosition,
-} from "../../utils/PostureCheckUtils";
 import "./video-feed.css";
 
 const VideoFeed = () => {
   const {
+    currentExercise,
     halfRepCompleted,
-    repCount,
     setHalfRepCompleted,
     setRepCount,
     setExercises,
@@ -55,99 +52,82 @@ const VideoFeed = () => {
   const runPoseDetection = useCallback(
     async (halfRepCompleted: boolean) => {
       let halfRepValue = halfRepCompleted;
+      // Check if the video and canvas elements are available
       const shouldRunPoseDetection =
         !isNil(videoRef.current) &&
         !isNil(canvasRef.current) &&
         videoRef.current?.videoWidth &&
         videoRef.current?.videoHeight;
+
       if (shouldRunPoseDetection) {
+        // Get the keypoints from the video
         const keyPoints = await getValidKyePointsFromVideo(
           videoRef.current,
           detector
         );
+
+        // If the keypoints are available
         if (keyPoints) {
+          // paint the keypoints on the canvas
           paintRefPoints(videoRef.current, canvasRef.current, keyPoints);
-          if (halfRepCompleted) {
-            const checks = checkSquatUpPosition(keyPoints);
-            if (checks.value) {
-              setHalfRepCompleted(false);
-              halfRepValue = false;
+
+          // Get the checks respective to the current exercise
+          const checks = getChecksFromExercise({
+            currentExercise,
+            halfRepCompleted,
+            keyPoints,
+          });
+
+          // If the checks are satisfied, toggle the halfRepCompleted value and clear the timeout
+          if (checks.value) {
+            halfRepValue = !halfRepCompleted;
+            setHalfRepCompleted(halfRepValue);
+            // Increment the rep count if the half rep was already previously completed
+            if (halfRepCompleted) {
               setRepCount((prev) => prev + 1);
-              clearTimeout(timeoutRef.current);
             }
-            setExercises((prev) => {
-              const currentExerciseIndex = prev.findIndex(
-                (exercise) => exercise.status === ExerciseStatus.Process
-              );
-              return prev.map((exercise, index) => {
-                if (index === currentExerciseIndex) {
-                  return {
-                    ...exercise,
-                    description: (
-                      <Row>
-                        {checks.feedbacks.map((feedback) => {
-                          return (
-                            <Col key={feedback.key}>
-                              <Typography.Text
-                                type={feedback.value ? "success" : "danger"}
-                              >
-                                {feedback.message}
-                              </Typography.Text>
-                            </Col>
-                          );
-                        })}
-                      </Row>
-                    ),
-                  };
-                }
-                return exercise;
-              });
-            });
-          } else {
-            const checks = checkSquatDownPosition(keyPoints);
-            if (checks.value) {
-              setHalfRepCompleted(true);
-              halfRepValue = true;
-              clearTimeout(timeoutRef.current);
-            }
-            setExercises((prev) => {
-              const currentExerciseIndex = prev.findIndex(
-                (exercise) => exercise.status === ExerciseStatus.Process
-              );
-              return prev.map((exercise, index) => {
-                if (index === currentExerciseIndex) {
-                  return {
-                    ...exercise,
-                    description: (
-                      <Row>
-                        {checks.feedbacks.map((feedback) => {
-                          return (
-                            <Col key={feedback.key}>
-                              <Typography.Text
-                                type={feedback.value ? "success" : "danger"}
-                              >
-                                {feedback.message}
-                              </Typography.Text>
-                            </Col>
-                          );
-                        })}
-                      </Row>
-                    ),
-                  };
-                }
-                return exercise;
-              });
-            });
+            clearTimeout(timeoutRef.current);
           }
 
-          timeoutRef.current = setTimeout(
-            () => runPoseDetection(halfRepValue),
-            0
-          );
+          // SetExercise description with the feedbacks
+          setExercises((prev) => {
+            const currentExerciseIndex = prev.findIndex(
+              (exercise) => exercise.status === ExerciseStatus.Process
+            );
+            return prev.map((exercise, index) => {
+              if (index === currentExerciseIndex) {
+                return {
+                  ...exercise,
+                  description: (
+                    <Row>
+                      {checks.feedbacks.map((feedback) => {
+                        return (
+                          <Col key={feedback.key}>
+                            <Typography.Text
+                              type={feedback.value ? "success" : "danger"}
+                            >
+                              {feedback.message}
+                            </Typography.Text>
+                          </Col>
+                        );
+                      })}
+                    </Row>
+                  ),
+                };
+              }
+              return { ...exercise, description: undefined };
+            });
+          });
         }
+
+        // Run the pose detection again with timeout
+        timeoutRef.current = setTimeout(
+          () => runPoseDetection(halfRepValue),
+          0
+        );
       }
     },
-    [repCount, videoRef.current, canvasRef.current, detector]
+    [setExercises, setHalfRepCompleted, setRepCount, detector, currentExercise]
   );
 
   useEffect(() => {

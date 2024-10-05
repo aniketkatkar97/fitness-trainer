@@ -15,6 +15,15 @@ interface Props {
   children: ReactNode;
 }
 
+export interface ExerciseStatDetails {
+  value: boolean;
+  feedbacks: {
+    key: string;
+    value: boolean;
+    message: string;
+  }[];
+}
+
 export interface ExerciseDetails extends StepProps {
   title: Exercises;
   key: number;
@@ -46,7 +55,7 @@ const initialExercises = Object.values(Exercises).map((exercise, index) => ({
 const ExerciseStatsProvider: FC<Props> = ({ children }) => {
   const [exercises, setExercises] =
     useState<ExerciseDetails[]>(initialExercises);
-  const [totalReps, setTotalReps] = useState(10);
+  const [totalReps, setTotalReps] = useState(2);
   const [halfRepCompleted, setHalfRepCompleted] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<ExerciseDetails>(
     exercises[0]
@@ -87,7 +96,7 @@ const ExerciseStatsProvider: FC<Props> = ({ children }) => {
       setHalfRepCompleted,
       setExercises,
     }),
-    [exercises, totalReps, currentExercise, repCount]
+    [exercises, totalReps, currentExercise, repCount, halfRepCompleted]
   );
 
   return (
