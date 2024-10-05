@@ -1,5 +1,5 @@
 "use client";
-import { getChecksFromExercise } from "@/utils/VideoFeeUtils";
+import { getChecksFromCurrentExercise } from "@/utils/VideoFeeUtils";
 import {
   createDetector,
   movenet,
@@ -72,7 +72,7 @@ const VideoFeed = () => {
           paintRefPoints(videoRef.current, canvasRef.current, keyPoints);
 
           // Get the checks respective to the current exercise
-          const checks = getChecksFromExercise({
+          const checks = getChecksFromCurrentExercise({
             currentExercise,
             halfRepCompleted,
             keyPoints,

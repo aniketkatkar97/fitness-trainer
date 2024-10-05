@@ -10,7 +10,7 @@ import {
 } from "./PostureCheckUtils";
 
 // Function to get the checks from the current exercise and whether the half rep is completed
-export const getChecksFromExercise = ({
+export const getChecksFromCurrentExercise = ({
   currentExercise,
   halfRepCompleted,
   keyPoints,
