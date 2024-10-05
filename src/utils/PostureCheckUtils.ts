@@ -44,12 +44,12 @@ export const checkSquatDownPosition = (
         {
           key: "leftHipKneeHorizontal",
           value: false,
-          message: "Left thigh is not parallel to the ground",
+          message: "Left thigh is parallel to the ground",
         },
         {
           key: "rightHipKneeHorizontal",
           value: false,
-          message: "Right thigh is not parallel to the ground",
+          message: "Right thigh is parallel to the ground",
         },
         {
           key: "leftKneeSafe",
@@ -80,12 +80,12 @@ export const checkSquatDownPosition = (
     {
       key: "leftHipKneeHorizontal",
       value: isLeftHipKneeHorizontal,
-      message: "Left thigh is not parallel to the ground",
+      message: "Left thigh is parallel to the ground",
     },
     {
       key: "rightHipKneeHorizontal",
       value: isRightHipKneeHorizontal,
-      message: "Right thigh is not parallel to the ground",
+      message: "Right thigh is parallel to the ground",
     },
     {
       key: "leftKneeSafe",
