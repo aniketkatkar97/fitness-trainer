@@ -10,10 +10,8 @@ import * as tf from "@tensorflow/tfjs";
 import { Col, Row, Typography } from "antd";
 import { isNil } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  ExerciseDetails,
-  useExerciseStatsProvider,
-} from "../../contexts/ExerciseStatsProvider";
+import { ExerciseDetails } from "../../contexts/ExerciseStats.interface";
+import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
 import { ExerciseStatus } from "../../enums/exercise.enum";
 import {
   getValidKyePointsFromVideo,

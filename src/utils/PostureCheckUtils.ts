@@ -1,4 +1,4 @@
-import { ExerciseStatDetails } from "@/contexts/ExerciseStatsProvider";
+import { ExerciseStatDetails } from "@/contexts/ExerciseStats.interface";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 
 export const calculateAngle = (

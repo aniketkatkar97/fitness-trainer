@@ -1,47 +1,19 @@
 "use client";
 
-import { StepProps } from "antd";
 import {
   createContext,
   FC,
-  ReactNode,
   useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
 import { Exercises, ExerciseStatus } from "../enums/exercise.enum";
-interface Props {
-  children: ReactNode;
-}
-
-export interface ExerciseStatDetails {
-  value: boolean;
-  feedbacks: {
-    key: string;
-    value: boolean;
-    message: string;
-  }[];
-}
-
-export interface ExerciseDetails extends StepProps {
-  title: Exercises;
-  count: number;
-  key: number;
-  status: ExerciseStatus;
-}
-export interface ExerciseStatsContextProps {
-  exercises: ExerciseDetails[];
-  totalReps: number;
-  currentExercise: ExerciseDetails;
-  repCount: number;
-  halfRepCompleted: boolean;
-  setCurrentExercise: React.Dispatch<React.SetStateAction<ExerciseDetails>>;
-  setRepCount: React.Dispatch<React.SetStateAction<number>>;
-  setTotalReps: React.Dispatch<React.SetStateAction<number>>;
-  setHalfRepCompleted: React.Dispatch<React.SetStateAction<boolean>>;
-  setExercises: React.Dispatch<React.SetStateAction<ExerciseDetails[]>>;
-}
+import {
+  ExerciseDetails,
+  ExerciseStatsContextProps,
+  ExerciseStatsProviderProps,
+} from "./ExerciseStats.interface";
 
 export const ExerciseStatsContext = createContext(
   {} as ExerciseStatsContextProps
@@ -54,7 +26,9 @@ const initialExercises = Object.values(Exercises).map((exercise, index) => ({
   status: index === 0 ? ExerciseStatus.Process : ExerciseStatus.Wait,
 }));
 
-const ExerciseStatsProvider: FC<Props> = ({ children }) => {
+const ExerciseStatsProvider: FC<ExerciseStatsProviderProps> = ({
+  children,
+}) => {
   const [exercises, setExercises] =
     useState<ExerciseDetails[]>(initialExercises);
   const [totalReps, setTotalReps] = useState(2);
@@ -63,9 +37,13 @@ const ExerciseStatsProvider: FC<Props> = ({ children }) => {
     exercises[0]
   );
   const [repCount, setRepCount] = useState(0);
+  const bellSound = new Audio("/sounds/bell.wav");
+  bellSound.volume = 0.2;
 
   useEffect(() => {
     if (repCount === totalReps) {
+      // Play a completed chime audio when the exercise is completed
+      bellSound.play();
       const currentExerciseIndex = currentExercise.key;
       if (currentExerciseIndex < exercises.length - 1) {
         setCurrentExercise(exercises[currentExerciseIndex + 1]);
@@ -77,6 +55,15 @@ const ExerciseStatsProvider: FC<Props> = ({ children }) => {
             }
             if (index === currentExerciseIndex + 1) {
               return { ...exercise, status: ExerciseStatus.Process };
+            }
+            return exercise;
+          })
+        );
+      } else {
+        setExercises((prev) =>
+          prev.map((exercise, index) => {
+            if (index === currentExerciseIndex) {
+              return { ...exercise, status: ExerciseStatus.Finish };
             }
             return exercise;
           })

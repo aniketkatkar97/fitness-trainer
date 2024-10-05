@@ -1,7 +1,7 @@
 import {
   ExerciseDetails,
   ExerciseStatDetails,
-} from "@/contexts/ExerciseStatsProvider";
+} from "@/contexts/ExerciseStats.interface";
 import { Exercises } from "@/enums/exercise.enum";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 import {
