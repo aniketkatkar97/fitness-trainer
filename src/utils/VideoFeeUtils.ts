@@ -5,6 +5,8 @@ import {
 import { Exercises } from "@/enums/exercise.enum";
 import { Keypoint } from "@tensorflow-models/pose-detection";
 import {
+  checkLungeDownPosition,
+  checkLungeUpPosition,
   checkSquatDownPosition,
   checkSquatUpPosition,
 } from "./PostureCheckUtils";
@@ -20,6 +22,10 @@ export const getChecksFromCurrentExercise = ({
   keyPoints: Keypoint[];
 }): ExerciseStatDetails => {
   switch (currentExercise.title) {
+    case Exercises.Lunges:
+      return halfRepCompleted
+        ? checkLungeUpPosition(keyPoints)
+        : checkLungeDownPosition(keyPoints);
     case Exercises.Squats:
     default:
       return halfRepCompleted
