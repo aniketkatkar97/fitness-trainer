@@ -26,6 +26,7 @@ export interface ExerciseStatDetails {
 
 export interface ExerciseDetails extends StepProps {
   title: Exercises;
+  count: number;
   key: number;
   status: ExerciseStatus;
 }
@@ -49,6 +50,7 @@ export const ExerciseStatsContext = createContext(
 const initialExercises = Object.values(Exercises).map((exercise, index) => ({
   title: exercise,
   key: index,
+  count: 0,
   status: index === 0 ? ExerciseStatus.Process : ExerciseStatus.Wait,
 }));
 

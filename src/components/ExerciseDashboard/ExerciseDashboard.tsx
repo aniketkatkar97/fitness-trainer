@@ -1,5 +1,5 @@
 "use client";
-import { Col, Layout, Row, Steps, Typography } from "antd";
+import { Col, Layout, Row, Space, Steps } from "antd";
 import Sider from "antd/es/layout/Sider";
 import { Content } from "antd/es/layout/layout";
 import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
@@ -23,15 +23,20 @@ function ExerciseDashboard() {
           style={{ height: "100%" }}
         >
           <Col>
-            <Typography.Title>
-              {repCount}
-            </Typography.Title>
             <Steps
               current={currentExercise.key}
               percent={(repCount / totalReps) * 100}
               labelPlacement="horizontal"
               direction="vertical"
-              items={exercises}
+              items={exercises.map((exercise) => ({
+                ...exercise,
+                title: (
+                  <Space size={8}>
+                    {exercise.title}
+                    {exercise.count}
+                  </Space>
+                ),
+              }))}
             />
           </Col>
         </Row>

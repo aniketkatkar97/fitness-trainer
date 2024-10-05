@@ -10,7 +10,10 @@ import * as tf from "@tensorflow/tfjs";
 import { Col, Row, Typography } from "antd";
 import { isNil } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
+import {
+  ExerciseDetails,
+  useExerciseStatsProvider,
+} from "../../contexts/ExerciseStatsProvider";
 import { ExerciseStatus } from "../../enums/exercise.enum";
 import {
   getValidKyePointsFromVideo,
@@ -20,6 +23,7 @@ import "./video-feed.css";
 
 const VideoFeed = () => {
   const {
+    repCount,
     currentExercise,
     halfRepCompleted,
     setHalfRepCompleted,
@@ -50,8 +54,23 @@ const VideoFeed = () => {
   };
 
   const runPoseDetection = useCallback(
-    async (halfRepCompleted: boolean) => {
+    async ({
+      halfRepCompleted,
+      repCount,
+      setExercises,
+      setHalfRepCompleted,
+      setRepCount,
+      currentExercise,
+    }: {
+      halfRepCompleted: boolean;
+      repCount: number;
+      setHalfRepCompleted: React.Dispatch<React.SetStateAction<boolean>>;
+      setRepCount: React.Dispatch<React.SetStateAction<number>>;
+      setExercises: React.Dispatch<React.SetStateAction<ExerciseDetails[]>>;
+      currentExercise: ExerciseDetails;
+    }) => {
       let halfRepValue = halfRepCompleted;
+      let repCountValue = repCount;
       // Check if the video and canvas elements are available
       const shouldRunPoseDetection =
         !isNil(videoRef.current) &&
@@ -84,6 +103,7 @@ const VideoFeed = () => {
             setHalfRepCompleted(halfRepValue);
             // Increment the rep count if the half rep was already previously completed
             if (halfRepCompleted) {
+              repCountValue = repCount + 1;
               setRepCount((prev) => prev + 1);
             }
             clearTimeout(timeoutRef.current);
@@ -98,6 +118,10 @@ const VideoFeed = () => {
               if (index === currentExerciseIndex) {
                 return {
                   ...exercise,
+                  count:
+                    currentExercise.title === exercise.title
+                      ? repCountValue
+                      : exercise.count,
                   description: (
                     <Row>
                       {checks.feedbacks.map((feedback) => {
@@ -122,12 +146,20 @@ const VideoFeed = () => {
 
         // Run the pose detection again with timeout
         timeoutRef.current = setTimeout(
-          () => runPoseDetection(halfRepValue),
+          () =>
+            runPoseDetection({
+              halfRepCompleted,
+              repCount,
+              setExercises,
+              setHalfRepCompleted,
+              setRepCount,
+              currentExercise,
+            }),
           0
         );
       }
     },
-    [setExercises, setHalfRepCompleted, setRepCount, detector, currentExercise]
+    [detector]
   );
 
   useEffect(() => {
@@ -138,8 +170,24 @@ const VideoFeed = () => {
   }, []);
 
   useEffect(() => {
-    runPoseDetection(halfRepCompleted);
-  }, [detector]);
+    clearTimeout(timeoutRef.current);
+    runPoseDetection({
+      halfRepCompleted,
+      repCount,
+      setExercises,
+      setHalfRepCompleted,
+      setRepCount,
+      currentExercise,
+    });
+  }, [
+    halfRepCompleted,
+    repCount,
+    setExercises,
+    setHalfRepCompleted,
+    setRepCount,
+    currentExercise,
+    runPoseDetection,
+  ]);
 
   return (
     <div className="pose-detection-container">
