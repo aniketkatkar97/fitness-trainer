@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Dumbbell, LineChart, Video } from "lucide-react";
-import Link from "next/link";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, Dumbbell, LineChart, Video } from 'lucide-react';
+import Link from 'next/link';
 
 export default function LandingPage() {
   return (
@@ -167,7 +167,7 @@ export default function LandingPage() {
                 size="lg"
                 className="bg-background text-primary hover:bg-background/90"
               >
-                <Link href="/signup">Sign Up for Free</Link>
+                <Link href="/workout">Get Started</Link>
               </Button>
             </div>
           </div>
