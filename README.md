@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fitness Trainer (Your Personal AI Fitness Trainer)
 
-## Getting Started
+Perfect your form, track your progress, and achieve your fitness goals with our AI-powered workout assistant.
 
-First, run the development server:
+## Key Features
+
+- Real-time Form Analysis
+  Get instant feedback on your exercise form to prevent injuries and maximize results.
+
+- Guided Workouts
+  Follow along with our AI trainer for a complete fitness routine tailored to your needs.
+
+- Progress Tracking
+  Monitor your improvements over time with detailed performance analytics.
+
+- Customizable Routines
+  Create personalized workout plans that fit your fitness level and goals.
+
+## How It Works
+
+- Set Up Your Camera
+  Position your device so the camera can see your full body during exercises.
+
+- Choose Your Workout
+  Select from our pre-designed routines or create your own custom workout.
+
+- Follow Along
+  Perform the exercises while our AI analyzes your form and counts your reps.
+
+## How to run project locally
+
+- Clone the repo
+
+```bash
+git clone git@github.com:aniketkatkar97/fitness-trainer.git
+
+cd fitness-trainer
+```
+
+- Install the dependencies
+
+```bash
+npm install
+```
+
+- Spin up the local server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This will start the local server on http://localhost:3000
