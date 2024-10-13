@@ -4,12 +4,8 @@ import {
 } from "@/contexts/ExerciseStats.interface";
 import { Exercises } from "@/enums/exercise.enum";
 import { Keypoint } from "@tensorflow-models/pose-detection";
-import {
-  checkLungeDownPosition,
-  checkLungeUpPosition,
-  checkSquatDownPosition,
-  checkSquatUpPosition,
-} from "./PostureCheckUtils";
+import { checkLungeDownPosition, checkLungeUpPosition } from "./LungeUtils";
+import { checkSquatDownPosition, checkSquatUpPosition } from "./SquatUtils";
 
 // Function to get the checks from the current exercise and whether the half rep is completed
 export const getChecksFromCurrentExercise = ({
