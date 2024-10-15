@@ -23,13 +23,20 @@ export interface ExerciseDetails extends StepProps {
 }
 export interface ExerciseStatsContextProps {
   exercises: ExerciseDetails[];
-  totalReps: number;
+  totalReps: RepsData;
   currentExercise: ExerciseDetails;
-  repCount: number;
+  repCount: RepsData;
   halfRepCompleted: boolean;
   setCurrentExercise: React.Dispatch<React.SetStateAction<ExerciseDetails>>;
-  setRepCount: React.Dispatch<React.SetStateAction<number>>;
-  setTotalReps: React.Dispatch<React.SetStateAction<number>>;
+  setRepCount: React.Dispatch<React.SetStateAction<RepsData>>;
+  setTotalReps: React.Dispatch<React.SetStateAction<RepsData>>;
   setHalfRepCompleted: React.Dispatch<React.SetStateAction<boolean>>;
   setExercises: React.Dispatch<React.SetStateAction<ExerciseDetails[]>>;
+}
+
+export interface RepsData {
+  lunges: number;
+  planks: number;
+  pushups: number;
+  squats: number;
 }

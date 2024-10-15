@@ -13,6 +13,7 @@ import {
   ExerciseDetails,
   ExerciseStatsContextProps,
   ExerciseStatsProviderProps,
+  RepsData,
 } from "./ExerciseStats.interface";
 
 export const ExerciseStatsContext = createContext(
@@ -31,12 +32,22 @@ const ExerciseStatsProvider: FC<ExerciseStatsProviderProps> = ({
 }) => {
   const [exercises, setExercises] =
     useState<ExerciseDetails[]>(initialExercises);
-  const [totalReps, setTotalReps] = useState(2);
+  const [totalReps, setTotalReps] = useState<RepsData>({
+    lunges: 0,
+    squats: 0,
+    planks: 0,
+    pushups: 0,
+  });
   const [halfRepCompleted, setHalfRepCompleted] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<ExerciseDetails>(
     exercises[0]
   );
-  const [repCount, setRepCount] = useState(0);
+  const [repCount, setRepCount] = useState<RepsData>({
+    lunges: 0,
+    squats: 0,
+    planks: 0,
+    pushups: 0,
+  });
   const bellSound = new Audio("/sounds/bell.wav");
   bellSound.volume = 0.2;
 
@@ -47,7 +58,6 @@ const ExerciseStatsProvider: FC<ExerciseStatsProviderProps> = ({
       const currentExerciseIndex = currentExercise.key;
       if (currentExerciseIndex < exercises.length - 1) {
         setCurrentExercise(exercises[currentExerciseIndex + 1]);
-        setRepCount(0);
         setExercises((prev) =>
           prev.map((exercise, index) => {
             if (index === currentExerciseIndex) {
