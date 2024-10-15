@@ -62,3 +62,13 @@ export const paintRefPoints = (
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawKeypoints(keyPoints, ctx);
 };
+
+export const calculateStraightLine = (
+  p1: Keypoint,
+  p2: Keypoint,
+  p3: Keypoint
+) => {
+  const angle =
+    Math.atan2(p3.y - p2.y, p3.x - p2.x) - Math.atan2(p1.y - p2.y, p1.x - p2.x);
+  return Math.abs((angle * 180) / Math.PI);
+};
