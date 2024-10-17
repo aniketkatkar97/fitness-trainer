@@ -12,7 +12,7 @@ import { isNil } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ExerciseDetails } from "../../contexts/ExerciseStats.interface";
 import { useExerciseStatsProvider } from "../../contexts/ExerciseStatsProvider";
-import { ExerciseStatus } from "../../enums/exercise.enum";
+import { Exercises, ExerciseStatus } from "../../enums/exercise.enum";
 import {
   getValidKyePointsFromVideo,
   paintRefPoints,
@@ -31,6 +31,9 @@ const VideoFeed = () => {
   const timeoutRef = useRef<NodeJS.Timeout>();
   const videoRef = useRef<HTMLVideoElement>(null); // Create a reference to the video element
   const canvasRef = useRef<HTMLCanvasElement>(null); // Create a reference to the canvas element to draw the keypoints
+  const plankTimerStartedRef = useRef<boolean>(false); // Create a reference to the plank timer
+  const plankTimerRef = useRef<NodeJS.Timeout>(); // Create a reference to the plank timer
+  const plankWrongPostureTimerRef = useRef<NodeJS.Timeout>(); // Create a reference to the plank timer
   const [detector, setDetector] = useState<PoseDetector>();
 
   // Function to initialize the detector
@@ -50,6 +53,68 @@ const VideoFeed = () => {
       videoRef.current.srcObject = stream;
     }
   };
+
+  const runPoseDetectionForPlank = useCallback(
+    async ({
+      repCount,
+      setExercises,
+      setHalfRepCompleted,
+      setRepCount,
+      currentExercise,
+    }: {
+      repCount: number;
+      setHalfRepCompleted: React.Dispatch<React.SetStateAction<boolean>>;
+      setRepCount: React.Dispatch<React.SetStateAction<number>>;
+      setExercises: React.Dispatch<React.SetStateAction<ExerciseDetails[]>>;
+      currentExercise: ExerciseDetails;
+    }) => {
+      const repCountValue = repCount;
+      // Check if the video and canvas elements are available
+      const shouldRunPoseDetection =
+        !isNil(videoRef.current) &&
+        !isNil(canvasRef.current) &&
+        videoRef.current?.videoWidth &&
+        videoRef.current?.videoHeight;
+
+      if (shouldRunPoseDetection) {
+        // Get the keypoints from the video
+        const keyPoints = await getValidKyePointsFromVideo(
+          videoRef.current,
+          detector
+        );
+
+        // If the keypoints are available
+        if (keyPoints) {
+          // paint the keypoints on the canvas
+          paintRefPoints(videoRef.current, canvasRef.current, keyPoints);
+
+          // Get the checks respective to the current exercise
+          const checks = getChecksFromCurrentExercise({
+            currentExercise,
+            keyPoints,
+          });
+
+          if (checks.value) {
+            // TODO: Need to add logic here
+          }
+        }
+
+        // Run the pose detection again with timeout
+        timeoutRef.current = setTimeout(
+          () =>
+            runPoseDetectionForPlank({
+              repCount,
+              setExercises,
+              setHalfRepCompleted,
+              setRepCount,
+              currentExercise,
+            }),
+          0
+        );
+      }
+    },
+    [detector]
+  );
 
   const runPoseDetection = useCallback(
     async ({
@@ -169,14 +234,25 @@ const VideoFeed = () => {
 
   useEffect(() => {
     clearTimeout(timeoutRef.current);
-    runPoseDetection({
-      halfRepCompleted,
-      repCount,
-      setExercises,
-      setHalfRepCompleted,
-      setRepCount,
-      currentExercise,
-    });
+    if (currentExercise.title === Exercises.Planks) {
+      clearTimeout(timeoutRef.current);
+      runPoseDetectionForPlank({
+        repCount,
+        setExercises,
+        setHalfRepCompleted,
+        setRepCount,
+        currentExercise,
+      });
+    } else {
+      runPoseDetection({
+        halfRepCompleted,
+        repCount,
+        setExercises,
+        setHalfRepCompleted,
+        setRepCount,
+        currentExercise,
+      });
+    }
   }, [
     halfRepCompleted,
     repCount,
@@ -185,6 +261,7 @@ const VideoFeed = () => {
     setRepCount,
     currentExercise,
     runPoseDetection,
+    runPoseDetectionForPlank,
   ]);
 
   return (
