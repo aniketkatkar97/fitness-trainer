@@ -27,9 +27,20 @@ export interface ExerciseStatsContextProps {
   currentExercise: ExerciseDetails;
   repCount: number;
   halfRepCompleted: boolean;
+  isAddResModalOpen: boolean;
+  isInitialRepCountAdded: boolean;
+  isExerciseFinished: boolean;
+  isExerciseChange: boolean;
   setCurrentExercise: React.Dispatch<React.SetStateAction<ExerciseDetails>>;
   setRepCount: React.Dispatch<React.SetStateAction<number>>;
   setTotalReps: React.Dispatch<React.SetStateAction<number>>;
   setHalfRepCompleted: React.Dispatch<React.SetStateAction<boolean>>;
   setExercises: React.Dispatch<React.SetStateAction<ExerciseDetails[]>>;
+  setIsInitialResCountAdded: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddRepForExercise: () => void;
+  handleCloseRepForExerciseModal: () => void;
+}
+
+export interface RepsData {
+  totalReps: number;
 }
