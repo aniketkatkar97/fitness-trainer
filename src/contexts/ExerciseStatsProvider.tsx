@@ -31,7 +31,7 @@ const ExerciseStatsProvider: FC<ExerciseStatsProviderProps> = ({
 }) => {
   const [exercises, setExercises] =
     useState<ExerciseDetails[]>(initialExercises);
-  const [totalReps, setTotalReps] = useState(2);
+  const [totalReps, setTotalReps] = useState(5);
   const [halfRepCompleted, setHalfRepCompleted] = useState(false);
   const [currentExercise, setCurrentExercise] = useState<ExerciseDetails>(
     exercises[0]

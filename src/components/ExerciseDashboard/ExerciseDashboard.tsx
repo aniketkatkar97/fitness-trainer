@@ -22,7 +22,8 @@ function ExerciseDashboard() {
           gutter={[16, 16]}
           style={{ height: "100%" }}
         >
-          <Col>
+          <Col offset={4}>
+            <strong>You will have to perform 5 reps for each exercise</strong>
             <Steps
               current={currentExercise.key}
               percent={(repCount / totalReps) * 100}

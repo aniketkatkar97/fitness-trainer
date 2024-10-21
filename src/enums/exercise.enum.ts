@@ -1,8 +1,7 @@
 export enum Exercises {
-  Lunges = "Lunges",
-  Planks = "Planks",
-  Pushups = "Pushups",
   Squats = "Squats",
+  Lunges = "Lunges",
+  Pushups = "Pushups",
 }
 
 export enum ExerciseStatus {

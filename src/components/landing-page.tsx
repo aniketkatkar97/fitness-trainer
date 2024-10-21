@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, Dumbbell, LineChart, Video } from 'lucide-react';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, Dumbbell, LineChart, Video } from "lucide-react";
+import Link from "next/link";
 
 export default function LandingPage() {
   return (
@@ -11,7 +11,7 @@ export default function LandingPage() {
           <Dumbbell className="h-6 w-6" />
           <span className="sr-only">Fitness Trainer</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        {/* <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link
             className="text-sm font-medium hover:underline underline-offset-4"
             href="#features"
@@ -30,7 +30,7 @@ export default function LandingPage() {
           >
             Get Started
           </Link>
-        </nav>
+        </nav> */}
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -49,14 +49,11 @@ export default function LandingPage() {
                 <Button asChild>
                   <Link href="/workout">Get Started</Link>
                 </Button>
-                <Button asChild variant="outline">
-                  <Link href="#how-it-works">Learn More</Link>
-                </Button>
               </div>
             </div>
           </div>
         </section>
-        <section
+        {/* <section
           id="features"
           className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800"
         >
@@ -185,7 +182,8 @@ export default function LandingPage() {
             Privacy
           </Link>
         </nav>
-      </footer>
+      </footer> */}
+      </main>
     </div>
   );
 }
